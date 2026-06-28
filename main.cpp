@@ -32,6 +32,7 @@ const int COLOR_PROMPT  = 14;  // Yellow       -- user prompts
 const int COLOR_SUCCESS = 10;  // Bright green -- positive feedback
 const int COLOR_WARNING = 12;  // Bright red   -- warnings and errors
 const int COLOR_DATA    = 15;  // Bright white -- table data
+const enum conditions {Poor = 1, Fair, Good, VeryGood, Mint}; //added enum for condition types -VC
 
 //  FUNCTION: setColor
 //  Purpose : Changes the console text color.
@@ -52,6 +53,38 @@ void displayBanner() {
     cout << endl;
 }
 
+//Array functions for week 6 -VC
+string worn[7]; //I know its a global variable but I was having some trouble with it so for now its here to keep it simple
+
+void whatYouWore(string mine[], string days[]) {
+
+    // for every day of the week, as the user what watch they wore
+    for (int i = 0; i < 7; i++) {
+       
+        setColor(COLOR_PROMPT);
+        cout << "  Enter the name of the watch you wore on " << days[i] << "day (Or 'None'): ";
+        setColor(COLOR_DEFAULT);
+        
+        string watchName;
+        cin >> watchName;
+        mine[i] = watchName;
+    }
+
+}
+
+void showWhatYouWore(string mine[], string days[]) {
+
+    // for every day of the week, as the user what watch they wore
+    cout << " This week you wore: " << endl;
+    setColor(COLOR_PROMPT);
+    for (int i = 0; i < 7; i++) {             
+        cout << days[i] << "day: " << mine[i] << endl; 
+    }
+    setColor(COLOR_DEFAULT);
+}
+//End of array funtions
+
+
 //  FUNCTION: displayMenu
 //  Purpose : Prints the main menu options to the console.
 void displayMenu() {
@@ -64,10 +97,11 @@ void displayMenu() {
     cout << "  2. View weekly collection report" << endl;
     cout << "  3. Get a recommendation based on your collection" << endl;
     cout << "  4. Quit" << endl;
+    cout << "  5. Track what you wore (Extra)" << endl; //You might want to switch 4 and 5 but I just didnt want to mess with too much -VC
     setColor(COLOR_HEADER);
     cout << "------------------------------------------------------------" << endl;
     setColor(COLOR_PROMPT);
-    cout << "  Enter your choice (1-4): ";
+    cout << "  Enter your choice (1-5): ";
     setColor(COLOR_DEFAULT);
 }
 
@@ -75,7 +109,7 @@ void displayMenu() {
 //  Purpose : Returns true if the menu choice is 1-4, false otherwise.
 //  Param   : choice - the integer entered by the user
 bool validateMenuChoice(int choice) {
-    return (choice >= 1 && choice <= 4);
+    return (choice >= 1 && choice <= 5);
 }
 
 //  FUNCTION: collectWatchInput
@@ -119,7 +153,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
     cout << "  Year Purchased (" << MIN_YEAR << " - " << MAX_YEAR << "): ";
     setColor(COLOR_DEFAULT);
     cin >> yearPurchased;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore((numeric_limits<streamsize>::max)(), '\n'); //There was an error with these max() lines, I dont know why, but wrapping it in additional parentheses fixes it -VC
 
     // WHILE LOOP: keeps asking until a valid year is entered
     while (cin.fail() || yearPurchased < MIN_YEAR || yearPurchased > MAX_YEAR) {
@@ -128,9 +162,9 @@ void collectWatchInput(string &brand, string &model, string &movementType,
              << MIN_YEAR << " and " << MAX_YEAR << ": ";
         setColor(COLOR_DEFAULT);
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
         cin >> yearPurchased;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
     }
 
     // -- Double input: purchase price --
@@ -138,7 +172,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
     cout << "  Purchase Price (USD, e.g., 450.00): $";
     setColor(COLOR_DEFAULT);
     cin >> purchasePrice;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore((numeric_limits<streamsize>::max)(), '\n');
 
     if (cin.fail() || purchasePrice <= 0) {
         setColor(COLOR_WARNING);
@@ -146,7 +180,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
              << fixed << setprecision(2) << DEFAULT_PRICE << "." << endl;
         setColor(COLOR_DEFAULT);
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
         purchasePrice = DEFAULT_PRICE;
     }
 
@@ -155,7 +189,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
     cout << "  Estimated Annual Appreciation Rate (%, e.g., 3.5): ";
     setColor(COLOR_DEFAULT);
     cin >> annualAppreciationRate;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore((numeric_limits<streamsize>::max)(), '\n');
 
     if (cin.fail() || annualAppreciationRate < 0 || annualAppreciationRate > MAX_RATE) {
         setColor(COLOR_WARNING);
@@ -163,7 +197,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
              << DEFAULT_RATE << "%." << endl;
         setColor(COLOR_DEFAULT);
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
         annualAppreciationRate = DEFAULT_RATE;
     }
 
@@ -172,7 +206,7 @@ void collectWatchInput(string &brand, string &model, string &movementType,
     cout << "  Condition Rating (1=Poor, 2=Fair, 3=Good, 4=Very Good, 5=Mint): ";
     setColor(COLOR_DEFAULT);
     cin >> conditionRating;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.ignore((numeric_limits<streamsize>::max)(), '\n');
 
     if (cin.fail() || conditionRating < MIN_CONDITION || conditionRating > MAX_CONDITION) {
         setColor(COLOR_WARNING);
@@ -180,9 +214,9 @@ void collectWatchInput(string &brand, string &model, string &movementType,
              << DEFAULT_COND << " (Good)." << endl;
         setColor(COLOR_DEFAULT);
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
         conditionRating = DEFAULT_COND;
-    }
+    }   
 }
 
 //  FUNCTION: calculateValues
@@ -219,11 +253,25 @@ void calculateValues(int yearPurchased, double purchasePrice,
 
     // Map numeric rating to readable label
     conditionLabel = "Unknown";
-    conditionLabel = (conditionRating == 1) ? "Poor"      : conditionLabel;
-    conditionLabel = (conditionRating == 2) ? "Fair"      : conditionLabel;
-    conditionLabel = (conditionRating == 3) ? "Good"      : conditionLabel;
-    conditionLabel = (conditionRating == 4) ? "Very Good" : conditionLabel;
-    conditionLabel = (conditionRating == 5) ? "Mint"      : conditionLabel;
+
+    switch (conditionRating) { //using switch for condition enum -VC
+    case Poor:
+        conditionLabel = "Poor";
+        break;
+    case Fair:
+        conditionLabel = "Fair";
+        break;
+    case Good:
+        conditionLabel = "Good";
+        break;
+    case VeryGood:
+        conditionLabel = "Very Good";
+        break;
+    case Mint:
+        conditionLabel = "Mint";
+        break;
+    }
+
 }
 
 //  FUNCTION: displayWatchSummary
@@ -494,6 +542,8 @@ int main() {
 
     int menuChoice = 0;
 
+    string days[] = { "Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur" }; //array for week 6 -VC
+
     // Display the welcome banner
     displayBanner();
 
@@ -501,7 +551,7 @@ int main() {
     do {
         displayMenu();
         cin >> menuChoice;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore((numeric_limits<streamsize>::max)(), '\n');
 
         // Validate menu choice; if bad, warn and loop again
         if (cin.fail() || !validateMenuChoice(menuChoice)) {
@@ -509,7 +559,7 @@ int main() {
             cout << "  [!] Invalid choice. Please enter 1, 2, 3, or 4." << endl;
             setColor(COLOR_DEFAULT);
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore((numeric_limits<streamsize>::max)(), '\n');
             cout << endl;
             continue;
         }
@@ -555,6 +605,7 @@ int main() {
             case 2:
                 displayWeeklyReport(watchCount, totalPurchaseValue,
                                     totalEstimatedValue);
+                showWhatYouWore(worn, days); // show list of what was worn each day if entered -VC
                 break;
 
             case 3:
@@ -567,6 +618,9 @@ int main() {
                 cout << "  Keep watching the market!" << endl;
                 setColor(COLOR_DEFAULT);
                 cout << endl;
+                break;
+            case 5: // week 6 -VC
+                whatYouWore(worn, days);
                 break;
         }
 
